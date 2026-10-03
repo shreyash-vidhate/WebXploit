@@ -1,0 +1,49 @@
+server_tokens off;
+
+map $http_x_webxploit_target $webxploit_backend {
+    default http://juice-shop:3000;
+    a01 http://a01-defense:3004;
+    a02 http://a02-crypto:3002;
+    a04 http://ssrf-demo:3001;
+    a06 http://component-demo:3007;
+    a07 http://auth-demo:3006;
+    a08 http://ssrf-demo:3001;
+    a09 http://logging-demo:3005;
+    a10 http://ssrf-demo:3001;
+}
+
+limit_req_zone $binary_remote_addr zone=login_limit:10m rate=3r/s;
+
+server {
+    listen 8080 default_server;
+    server_name localhost;
+    resolver 127.0.0.11 valid=5s ipv6=off;
+
+    location ~ ^/(rest/user/login|login)$ {
+        limit_req zone=login_limit burst=2 nodelay;
+        limit_req_status 429;
+        client_max_body_size 0;
+        include includes/cors.conf;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass $webxploit_backend;
+        proxy_read_timeout 60s;
+    }
+
+    location / {
+        client_max_body_size 0;
+        include includes/cors.conf;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass $webxploit_backend;
+        proxy_read_timeout 60s;
+    }
+
+    include includes/location_common.conf;
+}

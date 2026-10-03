@@ -1,0 +1,104 @@
+services:
+  juice-shop:
+    image: bkimminich/juice-shop:v15.0.0
+    container_name: webxploit-juice-shop
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks: [webxploit-net]
+
+  a01-access:
+    build: ./a01-access
+    container_name: webxploit-a01-access
+    restart: unless-stopped
+    ports: ["127.0.0.1:3003:3003"]
+    networks: [webxploit-net]
+
+  a01-defense:
+    build: ./a01-defense
+    container_name: webxploit-a01-defense
+    restart: unless-stopped
+    expose: ["3004"]
+    networks: [webxploit-net]
+
+  a02-crypto:
+    build: ./a02-crypto
+    container_name: webxploit-a02-crypto
+    restart: unless-stopped
+    ports: ["127.0.0.1:3002:3002"]
+    networks: [webxploit-net]
+
+  ssrf-demo:
+    build: ./ssrf-demo
+    container_name: webxploit-ssrf-demo
+    restart: unless-stopped
+    ports: ["127.0.0.1:3001:3001"]
+    depends_on: [mock-metadata]
+    networks: [webxploit-net]
+
+  mock-metadata:
+    build: ./mock-metadata
+    container_name: webxploit-mock-metadata
+    restart: unless-stopped
+    expose: ["8081"]
+    networks: [webxploit-net]
+
+  auth-demo:
+    build: ./auth-demo
+    container_name: webxploit-auth-demo
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3006:3006"
+    expose: ["3006"]
+    networks: [webxploit-net]
+
+  logging-demo:
+    build: ./logging-demo
+    container_name: webxploit-logging-demo
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3005:3005"
+    expose: ["3005"]
+    volumes:
+      - ../telemetry:/telemetry
+    networks: [webxploit-net]
+
+  component-demo:
+    build: ./component-demo
+    container_name: webxploit-component-demo
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3007:3007"
+    expose: ["3007"]
+    networks: [webxploit-net]
+
+  common-waf:
+    build: ./common-waf
+    container_name: webxploit-waf
+    restart: unless-stopped
+    ports: ["127.0.0.1:8080:8080"]
+    environment:
+      PARANOIA: "1"
+      BLOCKING_PARANOIA: "1"
+      REPORTING_LEVEL: "2"
+      SERVER_NAME: "localhost"
+      NGINX_PORT_IN_REDIRECT: "off"
+    depends_on:
+      - juice-shop
+      - a01-defense
+      - a02-crypto
+      - ssrf-demo
+      - auth-demo
+      - logging-demo
+      - component-demo
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/ >/dev/null"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [webxploit-net]
+
+networks:
+  webxploit-net:
+    driver: bridge

@@ -1,0 +1,17 @@
+scenario:
+  id: EXPLOIT-A05
+  name: Security Misconfiguration - Directory Listing Probe
+  category: OWASP A05:2021 - Security Misconfiguration
+  description: Probes for directory listing and unhandled server stack trace responses.
+target:
+  host: http://localhost
+  direct_port: 3000
+  waf_port: 8080
+  endpoint: /ftp
+  waf_target: default
+steps:
+- step: 1
+  name: Fetch FTP Directory Index
+  method: GET
+  payload: {}
+expected: waf_block

@@ -1,0 +1,21 @@
+scenario:
+  id: EXPLOIT-A08
+  name: Software and Data Integrity - Role Validation
+  category: OWASP A08:2021 - Software and Data Integrity Failures
+  description: Tests a non-persistent integrity-validation flaw by submitting an unauthorized
+    role value.
+target:
+  host: http://localhost
+  direct_port: 3001
+  waf_port: 8080
+  endpoint: /users/validate
+  waf_target: a08
+steps:
+- step: 1
+  name: Submit Admin Role
+  method: POST
+  headers:
+    Content-Type: application/json
+  payload:
+    role: admin
+expected: integrity

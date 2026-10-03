@@ -1,0 +1,17 @@
+scenario:
+  id: EXPLOIT-A06
+  name: Vulnerable Components - Exposed API Docs
+  category: OWASP A06:2021 - Vulnerable Components
+  description: Detects exposed Swagger/OpenAPI documentation endpoints.
+target:
+  host: http://localhost
+  direct_port: 3007
+  waf_port: 8080
+  endpoint: /component-report
+  waf_target: a06
+steps:
+- step: 1
+  name: Fetch Swagger Definition File
+  method: GET
+  payload: {}
+expected: vulnerable_component

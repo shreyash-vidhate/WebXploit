@@ -1,0 +1,18 @@
+scenario:
+  id: EXPLOIT-A02
+  name: Cryptographic Failures - Exposed Sensitive Backup
+  category: OWASP A02:2021 - Cryptographic Failures
+  description: Tests exposure of a sensitive backup file containing simulated local-lab
+    secrets over an unauthenticated HTTP endpoint.
+target:
+  host: http://localhost
+  direct_port: 3002
+  waf_port: 8080
+  endpoint: /backup/application-config.bak
+  waf_target: a02
+steps:
+- step: 1
+  name: Request Exposed Backup File
+  method: GET
+  payload: {}
+expected: waf_block

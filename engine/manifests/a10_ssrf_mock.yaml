@@ -1,0 +1,18 @@
+scenario:
+  id: EXPLOIT-A10-SAFE
+  name: SSRF - Docker-Only Mock Metadata
+  category: OWASP A10:2021 - Server-Side Request Forgery
+  description: Safe local-only SSRF simulation against a Docker mock metadata service.
+target:
+  host: http://localhost
+  direct_port: 3001
+  waf_port: 8080
+  endpoint: /fetch
+  waf_target: a10
+steps:
+- step: 1
+  name: Request Docker-Only Mock Metadata
+  method: GET
+  payload:
+    url: http://mock-metadata:8081/latest/meta-data
+expected: ssrf

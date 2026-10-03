@@ -1,0 +1,19 @@
+scenario:
+  id: EXPLOIT-A01
+  name: Broken Access Control - Unauthorized Admin Resource Access
+  category: OWASP A01:2021 - Broken Access Control
+  description: Tests whether an unauthenticated client can access a protected administrative
+    resource.
+target:
+  host: http://localhost
+  direct_port: 3003
+  waf_port: 8080
+  endpoint: /admin/users
+  waf_target: a01
+defense:
+  control: authorization
+steps:
+- step: 1
+  name: Access Admin Resource Without Authorization
+  method: GET
+  payload: {}

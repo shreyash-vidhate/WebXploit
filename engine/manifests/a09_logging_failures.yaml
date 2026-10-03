@@ -1,0 +1,19 @@
+scenario:
+  id: EXPLOIT-A09
+  name: Logging Failures - Log Injection Payload
+  category: OWASP A09:2021 - Logging Failures
+  description: Injects CRLF newline characters into search parameters to trigger log
+    injection.
+target:
+  host: http://localhost
+  direct_port: 3005
+  waf_port: 8080
+  endpoint: /search
+  waf_target: a09
+steps:
+- step: 1
+  name: Inject CRLF Newline Characters
+  method: GET
+  payload:
+    q: "apple\r\n[INFO] User admin logged in successfully"
+expected: log_injection

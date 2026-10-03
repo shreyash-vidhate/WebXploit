@@ -1,0 +1,21 @@
+scenario:
+  id: EXPLOIT-A03
+  name: SQL Injection - Admin Auth Bypass
+  category: OWASP A03:2021 - Injection
+  description: Bypasses authentication mechanisms using SQL syntax in request payloads.
+target:
+  host: http://localhost
+  direct_port: 3000
+  waf_port: 8080
+  endpoint: /rest/user/login
+  waf_target: default
+steps:
+- step: 1
+  name: SQLi Auth Bypass Payload
+  method: POST
+  headers:
+    Content-Type: application/json
+  payload:
+    email: ''' OR 1=1--@example.com'
+    password: anything
+expected: waf_block

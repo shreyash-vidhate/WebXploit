@@ -1,0 +1,63 @@
+scenario:
+  id: EXPLOIT-A07
+  name: Authentication Failures - Brute Force Attempt
+  category: OWASP A07:2021 - Identification and Auth Failures
+  description: Simulates rapid login brute-force attempts without rate limiting.
+target:
+  host: http://localhost
+  direct_port: 3006
+  waf_port: 8080
+  endpoint: /login
+  waf_target: a07
+steps:
+- step: 1
+  name: Rapid Invalid Login Attempt 1
+  method: POST
+  headers:
+    Content-Type: application/json
+  payload:
+    email: admin@webxploit.local
+    password: wrong-1
+- step: 2
+  name: Rapid Invalid Login Attempt 2
+  method: POST
+  headers:
+    Content-Type: application/json
+  payload:
+    email: admin@webxploit.local
+    password: wrong-2
+- step: 3
+  name: Rapid Invalid Login Attempt 3
+  method: POST
+  headers:
+    Content-Type: application/json
+  payload:
+    email: admin@webxploit.local
+    password: wrong-3
+- step: 4
+  name: Rapid Invalid Login Attempt 4
+  method: POST
+  headers:
+    Content-Type: application/json
+  payload:
+    email: admin@webxploit.local
+    password: wrong-4
+- step: 5
+  name: Rapid Invalid Login Attempt 5
+  method: POST
+  headers:
+    Content-Type: application/json
+  payload:
+    email: admin@webxploit.local
+    password: wrong-5
+- step: 6
+  name: Rapid Invalid Login Attempt 6
+  method: POST
+  headers:
+    Content-Type: application/json
+  payload:
+    email: admin@webxploit.local
+    password: wrong-6
+defense:
+  control: rate_limit
+expected: rate_limit

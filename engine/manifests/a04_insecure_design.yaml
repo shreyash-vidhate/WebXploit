@@ -1,0 +1,19 @@
+scenario:
+  id: EXPLOIT-A04
+  name: Insecure Design - Negative Basket Quantity
+  category: OWASP A04:2021 - Insecure Design
+  description: Tests a non-persistent business-logic validation flaw using a negative
+    basket quantity.
+target:
+  host: http://localhost
+  direct_port: 3001
+  waf_port: 8080
+  endpoint: /basket/validate
+  waf_target: a04
+steps:
+- step: 1
+  name: Submit Negative Basket Quantity
+  method: GET
+  payload:
+    quantity: '-5'
+expected: business_logic
